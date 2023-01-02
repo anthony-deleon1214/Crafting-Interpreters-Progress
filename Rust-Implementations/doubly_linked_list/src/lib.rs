@@ -15,6 +15,22 @@ impl DoublyLinkedList {
     pub fn append(&self, value: String) {
 
     }
+
+    pub fn insert_before(&self, value: String, target: ListNode) {
+
+    }
+
+    pub fn insert_after(&self, value: String, target: ListNode) {
+
+    }
+
+    pub fn find(&self, value: String) {
+
+    }
+
+    pub fn remove(&mut self, value: String) {
+
+    }
 }
 
 struct ListNode {
