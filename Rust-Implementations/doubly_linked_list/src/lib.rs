@@ -1,65 +1,57 @@
-pub struct DoublyLinkedList {
-    head: Box<ListNode>,
-    tail: Box<ListNode>,
+use std::marker::PhantomData;
+use std::ptr::NonNull;
+
+struct Node<T> {
+    val: T,
+    prev: Option<NonNull<Node<T>>>,
+    next: Option<NonNull<Node<T>>>,
 }
 
-impl DoublyLinkedList {
-    pub fn new(value: String) -> DoublyLinkedList {
-        let node = ListNode::new(value, None);
-        DoublyLinkedList {
-            head: Box::new(node),
-            tail: Box::new(node),
-        }
-    }
-
-    pub fn append(&self, value: String) {
-
-    }
-
-    pub fn insert_before(&self, value: String, target: ListNode) {
-
-    }
-
-    pub fn insert_after(&self, value: String, target: ListNode) {
-
-    }
-
-    pub fn find(&self, value: String) {
-
-    }
-
-    pub fn remove(&mut self, value: String) {
-
-    }
-}
-
-struct ListNode {
-    prev: Option<Box<ListNode>>,
-    value: String,
-    next: Option<Box<ListNode>>,
-}
-
-impl ListNode {
-    fn new(value: String, prev: Option<ListNode>) -> ListNode {
-        let prev_pointer = match prev {
-            None => None,
-            Some(node) => Some(Box::new(node)),
-        };
-        ListNode {
-            prev: prev_pointer,
-            value,
-            next: None,
+impl<T> Node<T> {
+    fn new(t: T) -> Node<T> {
+        Node {
+            val: t,
+            prev: None,
+            next: None
         }
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+struct LinkedList<T> {
+    length: u32,
+    head: Option<NonNull<Node<T>>>,
+    tail: Option<NonNull<Node<T>>>,
+    marker: PhantomData<Box<Node<T>>>,
+}
 
-    /*#[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    } */
+impl<T> Default for LinkedList<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl<T> LinkedList<T> {
+    pub fn new() -> Self {
+        Self {
+            length: 0,
+            head: None,
+            tail: None,
+            marker: PhantomData,
+        }
+    }
+
+    pub fn insert_at_head(&mut self, value: T) {
+        let mut node = Box::new(Node::new(value));
+        node.next = self.head;
+        node.prev = None;
+        let node_ptr = Some(unsafe { NonNull::new_unchecked(Box::into_raw(node)) });
+        match self.head {
+            None => self.tail = node_ptr,
+            Some(head_ptr) => unsafe {
+                (*head_ptr.as_ptr()).prev = node_ptr
+            },
+        }
+        self.head = node_ptr;
+        self.length += 1;
+    }
 }
