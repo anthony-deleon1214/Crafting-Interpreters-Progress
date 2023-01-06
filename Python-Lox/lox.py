@@ -1,23 +1,28 @@
 import argparse
+import scanner
 import io
 import sys
 
 class Lox:
-    def __init__(self, args) -> None:
-        if len(args) > 1:
-            print("Error: too many arguments")
-        elif len(args) == 1:
-            self.runFile(args[0])
-        else:
-            self.runPrompt()
+    def __init__(self):
+        self.had_error = False
+        self.had_runtime_error = False
+
+        
 
     def runFile(self, path):
         with open(path, 'rb') as file:
             contents = file.read()
         self.run(contents)
+        if self.hadError:
+            sys.exit(1)
 
     def error(self, line, message):
-        pass
+        self.report(line, "", message)
+
+    def report(self, line, where, message):
+        self.hadError = True
+        sys.stderr.write("[line " + line + "] Error" + where + ": " + message)
 
     def runPrompt(self):
         input = io.BufferedReader
@@ -28,14 +33,11 @@ class Lox:
             if line == None:
                 break
             self.run(line)
+            self.hadError = False
 
     def run(self, *args):
         scanner = Scanner(args)
         tokens = scanner.scanTokens()
 
-class Scanner:
-    def __init__(self, source):
-        self.source = source
-
-    def scanTokens(self) -> list:
-        
+        for token in tokens:
+            print(token)
