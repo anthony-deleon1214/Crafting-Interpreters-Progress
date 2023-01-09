@@ -87,7 +87,7 @@ class Scanner():
         Arguments are stored in Scanner class instance
         Switch statement to add each token to self.tokens
         """
-        char = self._advance()
+        char: str = self._advance()
         match char:
             # Handling single character lexemes
             case '(':
@@ -139,30 +139,89 @@ class Scanner():
             case '\n':
                 self._line += 1
 
-            # Processing literals
+            # Handling string literals
             case '"':
-                self._addToken(TokenType.STRING)
+                self._string()
 
-            # Error in default case
+            # Check for numbers in other cases, error if not a number
             case _:
-                Lox.error(self._line, "Unexpected character")
+                if char.isdigit():
+                    self._number()
+                elif char.isalpha():
+                    self._identifier()
+                else:
+                    Lox.error(self._line, "Unexpected character")
             
 
     def _advance(self) -> str:
+        """
+        Consumes and returns current character
+        """
         self._current += 1
         return self.source[self._current-1]
 
-    def _peek(self) -> str:
+    def _peek(self, pos_ahead: int = 1) -> str:
         """
-        Checks the current character without advancing
+        Checks next character without advancing
+        Takes optional position argument (default 1)
+        Checks that many characters ahead of current position
         """
         if self._is_at_eof():
             return '\0'
-        return self.source[self._current]
+        return self.source[self._current + pos_ahead]
 
     def _addToken(self, tokenType: TokenType, literal:str = None) -> None:
+        """
+        Takes TokenType object and option literal for token
+        Appends a Token object to self.tokens list
+        """
         text = self.source[self._start:self._current]
         self.tokens.append(Token(tokenType, text, literal, self._line))
+
+    def _string(self):
+        """
+        Consumes characters until finding end or closing quote
+        Increments self._line if newline found
+        Causes error if string is unterminated
+        Adds a string token via addToken method
+        """
+        while self._peek() != '"' and not self._is_at_eof():
+            if self._peek() == '\n':
+                self._line += 1
+            self._advance()
+        
+        if self._is_at_eof():
+            Lox.error(self._line, "Unterminated string.")
+            return None
+
+        self._advance()
+
+        value = self.source[self._start + 1, self._current - 1]
+        self._addToken(TokenType.STRING, value)
+
+    def _number(self) -> str:
+        """
+        Advances as long as next character is a digit
+        If a period is found, peeks character after period
+        If character is a digit, advances until finding non-digit
+        Appends number to tokens list
+        Returns string containing the full number value
+        """
+        while self._peek().isdigit():
+            self._advance()
+
+        if self._peek() == '.' and self._peek(2).isdigit():
+            self._advance()
+
+            while self._peek().isdigit():
+                self._advance()
+
+        number_string = self.source[self._start:self._current]
+        self._addToken(TokenType.NUMBER, float(number_string) if '.' in number_string else int(number_string))
+        return number_string
+
+    def _identifier(self):
+        pass
 
     def _match(self, expected):
         """
