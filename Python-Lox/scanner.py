@@ -68,6 +68,26 @@ class Scanner():
         self._current = 0
         self._line = 1
 
+        # Dictionary of reserved words
+        self._reserved_words = {
+            "and": TokenType.AND,
+            "class": TokenType.CLASS,
+            "else": TokenType.ELSE,
+            "false": TokenType.FALSE,
+            "for": TokenType.FOR,
+            "fun": TokenType.FUN,
+            "if": TokenType.IF,
+            "nil": TokenType.NIL,
+            "or": TokenType.OR,
+            "print": TokenType.PRINT,
+            "return": TokenType.RETURN,
+            "super": TokenType.SUPER,
+            "this": TokenType.THIS,
+            "true": TokenType.TRUE,
+            "var": TokenType.VAR,
+            "while": TokenType.WHILE
+        }
+
     def scanTokens(self) -> list:
         """
         Loops through each character in source file passed to Scanner instance at initialization
@@ -221,7 +241,16 @@ class Scanner():
         return number_string
 
     def _identifier(self):
-        pass
+        """
+        Advances while next character is alphanumeric
+        Appends an identifier token to tokens list
+        """
+        while self._peek().isalnum():
+            self._advance()
+
+        text = self.source[self._start:self._current]
+        reserved = self._reserved_words.get(text)
+        self._addToken(TokenType.IDENTIFIER) if reserved is None else self._addToken(reserved)
 
     def _match(self, expected):
         """
