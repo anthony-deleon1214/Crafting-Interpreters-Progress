@@ -1,6 +1,10 @@
 from lox import Lox
 from enum import Enum, auto
 
+# Potential to-dos
+# Add support for multi-block comments in the /*...*/ style
+# Handle whitespace, doc-strings, and comments to allow for doc extraction
+
 # Sum type for all accepted TokenTypes in Lox
 class TokenType(Enum):
     # Single character tokens
