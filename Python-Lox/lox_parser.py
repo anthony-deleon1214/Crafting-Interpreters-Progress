@@ -146,7 +146,7 @@ class Parser:
             self._consume(scanner.TokenType.RIGHT_PAREN, "Expected ')' after expression")
             return grammar.Grouping(expr)
 
-    def _consume(self, token_type: scanner.TokenType):
+    def _consume(self, token_type: scanner.TokenType, msg: str):
         """
         Consumes next token if it is the provided type
         Raises an error otherwise
@@ -157,4 +157,4 @@ class Parser:
         raise self._error(self._peek(), msg)
 
     def _error(self, token: scanner.Token, msg: str) -> ParseError:
-        pass
+        return ParseError()
