@@ -1,5 +1,6 @@
 import scanner
 import grammar
+import lox
 
 class ParseError(Exception):
     """Raised for unexpected token"""
@@ -7,6 +8,7 @@ class ParseError(Exception):
 class Parser:
     def __init__(self, token_list: list[scanner.Token]) -> None:
         self.tokens = token_list
+        self._interpreter = lox.Lox
         self._current = 0
 
     def parse(self):
@@ -157,4 +159,33 @@ class Parser:
         raise self._error(self._peek(), msg)
 
     def _error(self, token: scanner.Token, msg: str) -> ParseError:
+        self._interpreter.error()
         return ParseError()
+
+    def _synchronize(self):
+        self._advance()
+
+        while not self.is_at_end():
+            if self._previous().type == scanner.TokenType.SEMICOLON:
+                return None
+
+            token_type = self._peek().type
+            match token_type:
+                case scanner.TokenType.CLASS:
+                    return None
+                case scanner.TokenType.FUN:
+                    return None
+                case scanner.TokenType.VAR:
+                    return None
+                case scanner.TokenType.FOR:
+                    return None
+                case scanner.TokenType.IF:
+                    return None
+                case scanner.TokenType.WHILE:
+                    return None
+                case scanner.TokenType.PRINT:
+                    return None
+                case scanner.TokenType.RETURN:
+                    return None
+            
+            self._advance()
