@@ -1,6 +1,8 @@
 import grammar
 import scanner
+from scanner
 import numbers
+import lox
 
 class LoxRuntimeError(Exception):
     """
@@ -9,6 +11,18 @@ class LoxRuntimeError(Exception):
     def __init__(self, token: scanner.Token, message: str):
         self._message = message
         self._token = token
+
+def stringify(obj: object) -> str:
+    if obj is None:
+        return "nil"
+
+    if isinstance(obj, numbers.Number):
+        text = str(obj)
+        if text.endswith(".0"):
+            text = text[0:len(text)-2]
+        return text
+
+    return str(obj)
 
 def concatOrAdd(left, right, operator):
     """
@@ -58,7 +72,7 @@ def checkNumberOperands(left, operator, right):
 
 class Interpreter():
     def __init__(self, lox) -> None:
-        self._lox = lox
+        self._lox = lox.Lox()
 
     def interpret(self, expr: grammar.Expression):
         try:

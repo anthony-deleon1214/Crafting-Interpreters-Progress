@@ -1,13 +1,14 @@
-import argparse
 import scanner
 import io
 import sys
 import lox_parser
+import interpreter
 
 class Lox:
     def __init__(self):
         self.had_error = False
-        self.had_runtime_error = False        
+        self.had_runtime_error = False
+        self.interpreter = interpreter.Interpreter()
 
     def runFile(self, path):
         with open(path, 'rb') as file:
@@ -41,15 +42,18 @@ class Lox:
             self.hadError = False
 
     def run(self, *args):
-        scanner = scanner(args)
-        tokens = scanner.scanTokens()
+        scanner = scanner.Scanner(args)
+        tokens = scanner.Scanner.scanTokens()
         parser = lox_parser.Parser(tokens)
         expression = parser.parse()
 
-        # Need to finish interpreter functionality
-
-        for token in tokens:
-            print(token)
+        if self.had_error:
+            sys.exit(65)
+        if self.had_runtime_error:
+            sys.exit(70)
+        
+        self.interpreter.interpret(expression)
 
     def runtime_error(self, error):
-        pass
+        sys.stderr.write("[line " + error.token.line + "] " + error.message)
+        self.had_runtime_error = True
