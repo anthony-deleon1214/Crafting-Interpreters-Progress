@@ -1,6 +1,5 @@
 import grammar
 import scanner
-from scanner
 import numbers
 import lox
 
@@ -30,9 +29,9 @@ def concatOrAdd(left, right, operator):
     Adds them if they are numbers
     Concatenates them if they are strings
     """
-    if left.isinstance(numbers.Number) and right.isinstance(numbers.Number):
+    if isinstance(left, numbers.Number) and isinstance(right, numbers.Number):
         return float(left) + float(right)
-    elif left.isinstance(str) and right.isinstance(str):
+    elif isinstance(left, str) and isinstance(right, str):
         return str(left) + str(right)
     else:
         raise LoxRuntimeError(operator, "Operands must both be either strings or numbers")

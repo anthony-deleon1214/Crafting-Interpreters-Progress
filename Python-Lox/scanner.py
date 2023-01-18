@@ -1,4 +1,4 @@
-from lox import Lox
+import lox
 from enum import Enum, auto
 
 # Potential to-dos
@@ -174,7 +174,7 @@ class Scanner():
                 elif char.isalpha():
                     self._identifier()
                 else:
-                    Lox.error(self._line, "Unexpected character")
+                    lox.Lox().error(self._line, "Unexpected character")
             
 
     def _advance(self) -> str:
@@ -215,7 +215,7 @@ class Scanner():
             self._advance()
         
         if self._is_at_eof():
-            Lox.error(self._line, "Unterminated string.")
+            lox.Lox().error(self._line, "Unterminated string.")
             return None
 
         self._advance()

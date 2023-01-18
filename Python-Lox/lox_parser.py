@@ -8,7 +8,7 @@ class ParseError(Exception):
 class Parser:
     def __init__(self, token_list: list[scanner.Token]) -> None:
         self.tokens = token_list
-        self._interpreter = lox.Lox
+        self._interpreter = lox.Lox()
         self._current = 0
 
     def parse(self):
