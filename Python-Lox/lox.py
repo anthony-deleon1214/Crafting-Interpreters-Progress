@@ -50,3 +50,6 @@ class Lox:
 
         for token in tokens:
             print(token)
+
+    def runtime_error(self, error):
+        pass
