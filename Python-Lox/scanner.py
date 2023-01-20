@@ -1,4 +1,3 @@
-import lox
 from enum import Enum, auto
 
 # Potential to-dos
@@ -65,8 +64,9 @@ class Token():
         return self.type + " " + self.lexeme + " " + self.literal
 
 class Scanner():
-    def __init__(self, source) -> None:
+    def __init__(self, interpreter, source) -> None:
         self.source = source
+        self._interpreter = interpreter
         self.tokens = []
         self._start = 0
         self._current = 0
@@ -174,7 +174,7 @@ class Scanner():
                 elif char.isalpha():
                     self._identifier()
                 else:
-                    lox.Lox().error(self._line, "Unexpected character")
+                    self._interpreter.scan_error(self._line, "Unexpected character")
             
 
     def _advance(self) -> str:
@@ -215,7 +215,7 @@ class Scanner():
             self._advance()
         
         if self._is_at_eof():
-            lox.Lox().error(self._line, "Unterminated string.")
+            self._interpreter.scan_error(self._line, "Unterminated string.")
             return None
 
         self._advance()

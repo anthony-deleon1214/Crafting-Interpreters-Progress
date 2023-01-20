@@ -1,7 +1,6 @@
 import grammar
 import scanner
 import numbers
-import lox
 
 class LoxRuntimeError(Exception):
     """
@@ -53,7 +52,7 @@ def isTrue(obj):
     """
     if obj is None:
         return False
-    elif isinstance(obk, bool):
+    elif isinstance(obj, bool):
         return bool(obj)
     else:
         return True

@@ -1,6 +1,6 @@
-import scanner
 import io
 import sys
+import scanner
 import lox_parser
 import interpreter
 
@@ -9,6 +9,8 @@ class Lox:
         self.had_error = False
         self.had_runtime_error = False
         self.interpreter = interpreter.Interpreter()
+        self.scanner = scanner.Scanner()
+        self.parser = lox_parser.Parser()
 
     def runFile(self, path):
         with open(path, 'rb') as file:
@@ -20,11 +22,18 @@ class Lox:
     def error(self, line, message):
         self.report(line, "", message)
 
+    def scan_error(self, line, msg):
+        self.report(line, "", msg)
+
     def parse_error(self, token: scanner.Token, msg: str):
         if token.token_type == scanner.TokenType.EOF:
             self.report(token.line, "at end", msg)
         else:
             self.report(token.line, " at '" + token.lexeme + "'", msg)
+
+    def runtime_error(self, error):
+        sys.stderr.write(error.message + "\n[line " + error.token.line + "]")
+        self.had_runtime_error = True
 
     def report(self, line, where, message):
         self.hadError = True

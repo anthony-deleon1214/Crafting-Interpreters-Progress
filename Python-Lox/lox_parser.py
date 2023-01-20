@@ -1,4 +1,4 @@
-import scanner
+from scanner import Token, TokenType
 import grammar
 import lox
 
@@ -6,7 +6,7 @@ class ParseError(Exception):
     """Raised for unexpected token"""
 
 class Parser:
-    def __init__(self, token_list: list[scanner.Token]) -> None:
+    def __init__(self, token_list: list[Token]) -> None:
         self.tokens = token_list
         self._interpreter = lox.Lox()
         self._current = 0
@@ -19,9 +19,9 @@ class Parser:
 
     def is_at_end(self) -> bool:
         """Checks if next token is EOF"""
-        return self._peek().type == scanner.TokenType.EOF
+        return self._peek().type == TokenType.EOF
 
-    def _match(self, *token_types: scanner.TokenType) -> bool:
+    def _match(self, *token_types: TokenType) -> bool:
         for token in token_types:
             if self._check(token):
                 self._advance()
@@ -29,7 +29,7 @@ class Parser:
 
         return False
 
-    def _check(self, token_type: scanner.TokenType) -> bool:
+    def _check(self, token_type: TokenType) -> bool:
         """
         Checks if current token matches a given type
         Does not consume the current token
@@ -38,13 +38,13 @@ class Parser:
             return False
         return self._peek(token_type) == token_type
 
-    def _peek(self) -> scanner.Token:
+    def _peek(self) -> Token:
         """
         Checks token at next position without incrementing self._current
         """
         return self.tokens[self._current]
 
-    def _previous(self) -> scanner.Token:
+    def _previous(self) -> Token:
         """
         Returns previous token from self.tokens
         """
@@ -70,7 +70,7 @@ class Parser:
         expr = self._comparison()
 
         # Checking for equality operators
-        while self._match(scanner.TokenType.BANG_EQUAL, scanner.TokenType.EQUAL_EQUAL):
+        while self._match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL):
             operator = self._previous()
             right = self._comparison()
             expr = grammar.Binary(expr, operator, right)
@@ -81,7 +81,7 @@ class Parser:
         expr = self._term()
 
         # Matching for any comparison operator
-        while self._match(scanner.TokenType.GREATER, scanner.TokenType.GREATER_EQUAL, scanner.TokenType.LESS, scanner.TokenType.LESS_EQUAL):
+        while self._match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL):
             operator = self._previous()
             right = self._term()
             expr = grammar.Binary(expr, operator, right)
@@ -92,7 +92,7 @@ class Parser:
         expr = self._factor()
 
         # Matching for addition and subtraction tokens
-        while self._match(scanner.TokenType.PLUS, scanner.TokenType.MINUS):
+        while self._match(TokenType.PLUS, TokenType.MINUS):
             operator = self._previous()
             right = self._factor()
             expr = grammar.Binary(expr, operator, right)
@@ -103,7 +103,7 @@ class Parser:
         expr = self._unary()
 
         # Matching for multiplication and division
-        while self._match(scanner.TokenType.SLASH, scanner.TokenType.STAR):
+        while self._match(TokenType.SLASH, TokenType.STAR):
             operator = self._previous()
             right = self._unary()
             expr = grammar.Binary(expr, operator, right)
@@ -117,7 +117,7 @@ class Parser:
         Return Unary syntax tree if found
         Call self._primary otherwise
         """
-        if self._match(scanner.TokenType.BANG, scanner.TokenType.MINUS):
+        if self._match(TokenType.BANG, TokenType.MINUS):
             operator = self._previous()
             right = self._unary()
             return grammar.Unary(operator, right)
@@ -130,25 +130,25 @@ class Parser:
         Returns Literal syntax tree node with corresponding Python type
         """
         # Check for boolean and null types
-        if self._match(scanner.TokenType.FALSE):
+        if self._match(TokenType.FALSE):
             return grammar.Literal(False)
-        if self._match(scanner.TokenType.TRUE):
+        if self._match(TokenType.TRUE):
             return grammar.Literal(True)
-        if self._match(scanner.TokenType.NIL):
+        if self._match(TokenType.NIL):
             return grammar.Literal(None)
 
         # Checking for string or number literals
-        if self._match(scanner.TokenType.NUMBER, scanner.TokenType.STRING):
+        if self._match(TokenType.NUMBER, TokenType.STRING):
             return grammar.Literal(self._previous().literal)
 
         # Checking for parenthesized expressions
-        if self._match(scanner.TokenType.LEFT_PAREN):
+        if self._match(TokenType.LEFT_PAREN):
             expr = self._expression()
             # Consume tokens until finding right parenthesis
-            self._consume(scanner.TokenType.RIGHT_PAREN, "Expected ')' after expression")
+            self._consume(TokenType.RIGHT_PAREN, "Expected ')' after expression")
             return grammar.Grouping(expr)
 
-    def _consume(self, token_type: scanner.TokenType, msg: str):
+    def _consume(self, token_type: TokenType, msg: str):
         """
         Consumes next token if it is the provided type
         Raises an error otherwise
@@ -158,7 +158,7 @@ class Parser:
 
         raise self._error(self._peek(), msg)
 
-    def _error(self, token: scanner.Token, msg: str) -> ParseError:
+    def _error(self, token: Token, msg: str) -> ParseError:
         self._interpreter.error()
         return ParseError()
 
@@ -166,26 +166,26 @@ class Parser:
         self._advance()
 
         while not self.is_at_end():
-            if self._previous().type == scanner.TokenType.SEMICOLON:
+            if self._previous().type == TokenType.SEMICOLON:
                 return None
 
             token_type = self._peek().type
             match token_type:
-                case scanner.TokenType.CLASS:
+                case TokenType.CLASS:
                     return None
-                case scanner.TokenType.FUN:
+                case TokenType.FUN:
                     return None
-                case scanner.TokenType.VAR:
+                case TokenType.VAR:
                     return None
-                case scanner.TokenType.FOR:
+                case TokenType.FOR:
                     return None
-                case scanner.TokenType.IF:
+                case TokenType.IF:
                     return None
-                case scanner.TokenType.WHILE:
+                case TokenType.WHILE:
                     return None
-                case scanner.TokenType.PRINT:
+                case TokenType.PRINT:
                     return None
-                case scanner.TokenType.RETURN:
+                case TokenType.RETURN:
                     return None
             
             self._advance()
