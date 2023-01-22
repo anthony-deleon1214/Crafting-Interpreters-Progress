@@ -1,14 +1,13 @@
 from scanner import Token, TokenType
 import grammar
-import lox
 
 class ParseError(Exception):
     """Raised for unexpected token"""
 
 class Parser:
-    def __init__(self, token_list: list[Token]) -> None:
+    def __init__(self, token_list: list[Token], interpreter) -> None:
         self.tokens = token_list
-        self._interpreter = lox.Lox()
+        self._interpreter = interpreter
         self._current = 0
 
     def parse(self):

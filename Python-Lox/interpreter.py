@@ -69,14 +69,18 @@ def checkNumberOperands(left, operator, right):
         raise LoxRuntimeError(operator, "Operands must both be numbers")
 
 class Interpreter():
-    def __init__(self, lox) -> None:
-        self._lox = lox.Lox()
+    def __init__(self, interpreter) -> None:
+        """
+        Must pass Lox instance as interpreter argument
+        Lox instance is required for error handling
+        """
+        self._interpreter = interpreter
 
     def interpret(self, expr: grammar.Expression):
         try:
             value = self._evaluate(expr)
         except LoxRuntimeError as error:
-            self._lox.runtime_error(error)
+            self._interpreter.runtime_error(error)
 
     def _evaluate(self, expr: grammar.Expression):
         return expr.accept(self)
