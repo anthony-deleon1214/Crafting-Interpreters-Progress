@@ -9,8 +9,6 @@ class Lox:
         self.had_error = False
         self.had_runtime_error = False
         self.interpreter = interpreter.Interpreter()
-        self.scanner = scanner.Scanner()
-        self.parser = lox_parser.Parser()
 
     def runFile(self, path):
         with open(path, 'rb') as file:
