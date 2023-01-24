@@ -7,6 +7,10 @@ base_description = {
         "Binary": [["Expression", "left"], ["scanner.Token", "operator"], ["Expression", "right"]],
         "Grouping": [["Expression", "expression"]],
         "Literal": [["object", "value"]]
+    },
+    "Statement": {
+        "Expression": ["Expr expression"],
+        "Print" : ["Expr expression"]
     }
 }
 
@@ -42,3 +46,6 @@ if __name__ == "__main__":
     path = "grammar.py"
     with open(path, "w+") as file:
         defineAST(file, "Expression", base_description["Expression"])
+    path = "statement.py"
+    with open(path, "w+") as file:
+        defineAST(file, "Stmt", base_description["Statement"])

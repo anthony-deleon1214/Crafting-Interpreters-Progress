@@ -1,3 +1,5 @@
+import scanner
+
 class Expression:
 	pass
 
