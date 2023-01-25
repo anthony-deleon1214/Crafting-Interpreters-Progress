@@ -4,6 +4,10 @@ from enum import Enum, auto
 # Add support for multi-block comments in the /*...*/ style
 # Handle whitespace, doc-strings, and comments to allow for doc extraction
 
+"""
+There is currently a scanning error and print statements are not being properly tokenized
+"""
+
 # Sum type for all accepted TokenTypes in Lox
 class TokenType(Enum):
     # Single character tokens
