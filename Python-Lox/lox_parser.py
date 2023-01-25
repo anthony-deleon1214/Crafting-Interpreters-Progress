@@ -1,4 +1,5 @@
 from scanner import Token, TokenType
+from statement import *
 import grammar
 
 class ParseError(Exception):
@@ -12,7 +13,10 @@ class Parser:
 
     def parse(self):
         try:
-            return self._expression()
+            statements = []
+            while not self.is_at_end():
+                statements.append(Stmt())
+            return statements
         except ParseError as error:
             return None
 
@@ -59,7 +63,23 @@ class Parser:
 
     def _expression(self):
         return self._equality()
+    
+    def _statement(self):
+        if self._match(TokenType.PRINT):
+            return self._printStatement()
 
+        return self._expressionStatement()
+
+    def _printStatement(self):
+        value = self._expression()
+        self._consume(TokenType.SEMICOLON, "Expect ';' after value.")
+        return Print(value)
+
+    def _expressionStatement(self):
+        expr = self._expression()
+        self._consume(TokenType.SEMICOLON, "Expect ';' after expression.")
+        return Expression(expr)
+        
     # Binary operator methods
     def _equality(self):
         """

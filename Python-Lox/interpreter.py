@@ -1,6 +1,7 @@
 import grammar
 import scanner
 import numbers
+import statement
 
 class LoxRuntimeError(Exception):
     """
@@ -76,14 +77,27 @@ class Interpreter():
         """
         self._interpreter = interpreter
 
-    def interpret(self, expr: grammar.Expression):
+    def interpret(self, stmts: list[statement.Stmt]):
         try:
-            value = self._evaluate(expr)
+            for stmt in stmts:
+                self._execute(stmt)
         except LoxRuntimeError as error:
             self._interpreter.runtime_error(error)
 
     def _evaluate(self, expr: grammar.Expression):
         return expr.accept(self)
+
+    def _execute(self, stmt: statement.Stmt):
+        stmt.accept(self)
+
+    def _visitExpressionStmt(self, stmt: statement.Expression) -> None:
+        self._evaluate(stmt.expression)
+        return None
+
+    def _visitPrintStmt(self, stmt: statement.Print) -> None:
+        value = self._evaluate(stmt.expression)
+        print(stringify(value))
+        return None
 
     def visitLiteral(self, expr: grammar.Literal):
         return expr.value

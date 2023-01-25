@@ -8,7 +8,7 @@ class Lox:
     def __init__(self):
         self.had_error = False
         self.had_runtime_error = False
-        self.interpreter = interpreter.Interpreter()
+        self.interpreter = interpreter.Interpreter(self)
 
     def runFile(self, path):
         with open(path, 'rb') as file:
@@ -49,18 +49,24 @@ class Lox:
             self.hadError = False
 
     def run(self, *args):
-        scanner = scanner.Scanner(args)
-        tokens = scanner.Scanner.scanTokens()
+        scan = scanner.Scanner(self, args)
+        tokens = scan.scanTokens()
         parser = lox_parser.Parser(tokens)
-        expression = parser.parse()
+        statements = parser.parse()
 
         if self.had_error:
             sys.exit(65)
         if self.had_runtime_error:
             sys.exit(70)
         
-        self.interpreter.interpret(expression)
+        self.interpreter.interpret(statements)
 
     def runtime_error(self, error):
         sys.stderr.write("[line " + error.token.line + "] " + error.message)
         self.had_runtime_error = True
+
+if __name__ == "__main__":
+    lox_test = Lox()
+    user_input = input(">>>")
+    while user_input != "exit":
+        lox_test.run(user_input)
