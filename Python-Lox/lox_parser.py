@@ -6,7 +6,7 @@ class ParseError(Exception):
     """Raised for unexpected token"""
 
 class Parser:
-    def __init__(self, token_list: list[Token], interpreter) -> None:
+    def __init__(self, interpreter, token_list: list[Token]) -> None:
         self.tokens = token_list
         self._interpreter = interpreter
         self._current = 0

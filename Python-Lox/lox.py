@@ -48,10 +48,10 @@ class Lox:
             self.run(line)
             self.hadError = False
 
-    def run(self, *args):
+    def run(self, args: str):
         scan = scanner.Scanner(self, args)
         tokens = scan.scanTokens()
-        parser = lox_parser.Parser(tokens)
+        parser = lox_parser.Parser(self, tokens)
         statements = parser.parse()
 
         if self.had_error:

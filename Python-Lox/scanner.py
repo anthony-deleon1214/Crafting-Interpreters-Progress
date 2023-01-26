@@ -68,13 +68,15 @@ class Token():
         return self.type + " " + self.lexeme + " " + self.literal
 
 class Scanner():
-    def __init__(self, interpreter, source) -> None:
-        self.source = source
+    def __init__(self, interpreter, source: str) -> None:
+        self.source = source    # Type of source is being listed as a tuple instead of a string
         self._interpreter = interpreter
         self.tokens = []
         self._start = 0
         self._current = 0
         self._line = 1
+
+        print(type(self.source))
 
         # Dictionary of reserved words
         self._reserved_words = {
@@ -107,7 +109,7 @@ class Scanner():
             self._start = self._current
             self._scanToken()
 
-        self.tokens.append(Token(TokenType.EOF, "", None, len(self._line)))
+        self.tokens.append(Token(TokenType.EOF, "", None, self._line))
         return self.tokens
 
     def _scanToken(self) -> None:
@@ -115,7 +117,7 @@ class Scanner():
         Arguments are stored in Scanner class instance
         Switch statement to add each token to self.tokens
         """
-        char: str = self._advance()
+        char = self._advance()
         match char:
             # Handling single character lexemes
             case '(':
@@ -196,7 +198,7 @@ class Scanner():
         """
         if self._is_at_eof():
             return '\0'
-        return self.source[self._current + pos_ahead]
+        return self.source[self._current + pos_ahead - 1]
 
     def _addToken(self, tokenType: TokenType, literal:str = None) -> None:
         """
@@ -224,7 +226,7 @@ class Scanner():
 
         self._advance()
 
-        value = self.source[self._start + 1, self._current - 1]
+        value = self.source[self._start + 1:self._current - 1]
         self._addToken(TokenType.STRING, value)
 
     def _number(self) -> str:
