@@ -70,3 +70,4 @@ if __name__ == "__main__":
     user_input = input(">>>")
     while user_input != "exit":
         lox_test.run(user_input)
+        user_input = input(">>>")

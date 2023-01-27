@@ -90,11 +90,11 @@ class Interpreter():
     def _execute(self, stmt: statement.Stmt):
         stmt.accept(self)
 
-    def _visitExpressionStmt(self, stmt: statement.Expression) -> None:
+    def visitExpression(self, stmt: statement.Expression) -> None:
         self._evaluate(stmt.expression)
         return None
 
-    def _visitPrintStmt(self, stmt: statement.Print) -> None:
+    def visitPrint(self, stmt: statement.Print) -> None:
         value = self._evaluate(stmt.expression)
         print(stringify(value))
         return None

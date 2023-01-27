@@ -76,8 +76,6 @@ class Scanner():
         self._current = 0
         self._line = 1
 
-        print(type(self.source))
-
         # Dictionary of reserved words
         self._reserved_words = {
             "and": TokenType.AND,

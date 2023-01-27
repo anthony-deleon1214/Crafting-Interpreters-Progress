@@ -15,7 +15,7 @@ class Parser:
         try:
             statements = []
             while not self.is_at_end():
-                statements.append(Stmt())
+                statements.append(self._statement())
             return statements
         except ParseError as error:
             return None
@@ -39,7 +39,7 @@ class Parser:
         """
         if self.is_at_end():
             return False
-        return self._peek(token_type) == token_type
+        return self._peek().type == token_type
 
     def _peek(self) -> Token:
         """
