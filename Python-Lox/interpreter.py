@@ -29,10 +29,10 @@ def concatOrAdd(left, right, operator):
     Adds them if they are numbers
     Concatenates them if they are strings
     """
-    if isinstance(left, numbers.Number) and isinstance(right, numbers.Number):
-        return float(left) + float(right)
-    elif isinstance(left, str) and isinstance(right, str):
-        return str(left) + str(right)
+    if isinstance(left.value, numbers.Number) and isinstance(right.value, numbers.Number):
+        return float(left.value) + float(right.value)
+    elif isinstance(left.value, str) and isinstance(right.value, str):
+        return str(left.value) + str(right.value)
     else:
         raise LoxRuntimeError(operator, "Operands must both be either strings or numbers")
 
@@ -59,12 +59,12 @@ def isTrue(obj):
         return True
 
 def checkNumberOperand(operator: scanner.Token, right: grammar.Expression):
-    if isinstance(right, numbers.Number):
+    if isinstance(right.value, numbers.Number):
         return
     raise LoxRuntimeError(operator, "Operand must be a number")
 
 def checkNumberOperands(left, operator, right):
-    if isinstance(left, numbers.Number) and isinstance(right, numbers.Number):
+    if isinstance(left.value, numbers.Number) and isinstance(right.value, numbers.Number):
         return
     else:
         raise LoxRuntimeError(operator, "Operands must both be numbers")
@@ -108,7 +108,7 @@ class Interpreter():
     def visitUnary(self, expr: grammar.Unary):
         right = self._evaluate(expr.right)
         
-        match expr.operator.token_type:
+        match expr.operator.type:
             case scanner.TokenType.MINUS:
                 checkNumberOperand(expr.operator)
                 return -float(right)
@@ -121,7 +121,7 @@ class Interpreter():
         left = self._evaluate(expr.left)
         right = self._evaluate(expr.right)
 
-        match expr.operator.token_type:
+        match expr.operator.type:
             case scanner.TokenType.MINUS:
                 checkNumberOperands(expr.left, expr.operator, expr.right)
                 return float(left) - float(right)
@@ -149,6 +149,6 @@ class Interpreter():
             case scanner.TokenType.BANG_EQUAL:
                 return left != right
             case scanner.TokenType.PLUS:
-                concatOrAdd(expr.left, expr.right, expr.operator)
+                return concatOrAdd(expr.left, expr.right, expr.operator)
 
         return None

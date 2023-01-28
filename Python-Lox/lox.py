@@ -24,7 +24,7 @@ class Lox:
         self.report(line, "", msg)
 
     def parse_error(self, token: scanner.Token, msg: str):
-        if token.token_type == scanner.TokenType.EOF:
+        if token.type == scanner.TokenType.EOF:
             self.report(token.line, "at end", msg)
         else:
             self.report(token.line, " at '" + token.lexeme + "'", msg)
