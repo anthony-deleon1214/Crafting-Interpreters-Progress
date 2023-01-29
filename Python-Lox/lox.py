@@ -11,10 +11,10 @@ class Lox:
         self.interpreter = interpreter.Interpreter(self)
 
     def runFile(self, path):
-        with open(path, 'rb') as file:
+        with open(path, 'r') as file:
             contents = file.read()
         self.run(contents)
-        if self.hadError:
+        if self.had_error:
             sys.exit(1)
 
     def error(self, line, message):
@@ -67,7 +67,8 @@ class Lox:
 
 if __name__ == "__main__":
     lox_test = Lox()
-    user_input = input(">>>")
-    while user_input != "exit":
-        lox_test.run(user_input)
-        user_input = input(">>>")
+    lox_test.runFile("loxtest.txt")
+    #user_input = input(">>>")
+    #while user_input != "exit":
+    #    lox_test.run(user_input)
+    #    user_input = input(">>>")
