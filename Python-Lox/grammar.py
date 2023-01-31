@@ -41,3 +41,10 @@ class Literal(Expression):
 
 	def accept(self, visitor):
 		return visitor.visitLiteral(self)
+
+class Variable(Expression):
+	def __init__(self, name):
+		self.name = name
+
+	def accept(self, visitor):
+		return visitor.visitVariable(self)

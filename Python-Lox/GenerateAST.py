@@ -3,14 +3,16 @@ import sys
 base_description = {
     "Expression": {
         "Chain": [["Expression", "left"], ["Expression, right"]],
-        "Unary": [["scanner.Token", "operator"], ["Expression", "right"]],
-        "Binary": [["Expression", "left"], ["scanner.Token", "operator"], ["Expression", "right"]],
+        "Unary": [["Token", "operator"], ["Expression", "right"]],
+        "Binary": [["Expression", "left"], ["Token", "operator"], ["Expression", "right"]],
         "Grouping": [["Expression", "expression"]],
-        "Literal": [["object", "value"]]
+        "Literal": [["object", "value"]],
+        "Variable": [["Token", "name"]]
     },
     "Statement": {
-        "Expression": ["Expr expression"],
-        "Print" : ["Expr expression"]
+        "Expression": [["Expression", "expression"]],
+        "Print" : [["Expression", "expression"]],
+        "Var" : [["Token", "name"], ["Expression", "initializer"]]
     }
 }
 
@@ -46,9 +48,6 @@ if __name__ == "__main__":
     path = "grammar.py"
     with open(path, "w+") as file:
         defineAST(file, "Expression", base_description["Expression"])
-
-    # Class attributes in statement.py are listed as "self.n"
-    # I fixed this manually and renamed to self.expression to keep moving forward
     path = "statement.py"
     with open(path, "w+") as file:
         defineAST(file, "Stmt", base_description["Statement"])
