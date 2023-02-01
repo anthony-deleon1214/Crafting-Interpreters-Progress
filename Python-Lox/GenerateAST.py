@@ -7,12 +7,13 @@ base_description = {
         "Binary": [["Expression", "left"], ["Token", "operator"], ["Expression", "right"]],
         "Grouping": [["Expression", "expression"]],
         "Literal": [["object", "value"]],
-        "Variable": [["Token", "name"]]
+        "VariableExpr": [["Token", "name"]],
+        "Assign": [["Token", "name"], ["Expression", "value"]]
     },
     "Statement": {
         "Expression": [["Expression", "expression"]],
         "Print" : [["Expression", "expression"]],
-        "Var" : [["Token", "name"], ["Expression", "initializer"]]
+        "VariableStmt" : [["Token", "name"], ["Expression", "initializer"]]
     }
 }
 

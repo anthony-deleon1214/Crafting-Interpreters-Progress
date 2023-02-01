@@ -17,10 +17,10 @@ class Print(Stmt):
 	def accept(self, visitor):
 		return visitor.visitPrint(self)
 
-class Var(Stmt):
+class VariableStmt(Stmt):
 	def __init__(self, name, initializer):
 		self.name = name
 		self.initializer = initializer
 
 	def accept(self, visitor):
-		return visitor.visitVar(self)
+		return visitor.visitVariableStmt(self)

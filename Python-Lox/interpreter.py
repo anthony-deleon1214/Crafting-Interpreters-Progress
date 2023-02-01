@@ -2,6 +2,7 @@ import grammar
 import scanner
 import numbers
 import statement
+from environment import Environment
 
 class LoxRuntimeError(Exception):
     """
@@ -76,6 +77,7 @@ class Interpreter():
         Lox instance is required for error handling
         """
         self._interpreter = interpreter
+        self.environment = Environment()
 
     def interpret(self, stmts: list[statement.Stmt]):
         try:
@@ -152,3 +154,19 @@ class Interpreter():
                 return concatOrAdd(expr.left, expr.right, expr.operator)
 
         return None
+
+    def visitVariableStmt(self, stmt: statement.VariableStmt) -> None:
+        value = None
+        if stmt.initializer is not None:
+            value = self._evaluate(stmt.initializer)
+
+        self.environment.define(stmt.name.lexeme, value)
+        return None
+
+    def visitVariableExpr(self, expr: grammar.VariableExpr) -> None:
+        return self.environment.get(expr.name)
+
+    def visitAssignExpr(self, expr: grammar.Assign) -> object:
+        value = self._evaluate(expr.value)
+        self.environment.assign(expr.name, value)
+        return value

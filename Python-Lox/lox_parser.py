@@ -15,7 +15,7 @@ class Parser:
         try:
             statements = []
             while not self.is_at_end():
-                statements.append(self._statement())
+                statements.append(self._declaration())
             return statements
         except ParseError as error:
             return None
@@ -62,7 +62,7 @@ class Parser:
         return self.tokens[self._current - 1]
 
     def _expression(self):
-        return self._equality()
+        return self._assignment()
     
     def _statement(self):
         if self._match(TokenType.PRINT):
@@ -70,15 +70,49 @@ class Parser:
 
         return self._expressionStatement()
 
+    def _declaration(self):
+        try:
+            if self._match(TokenType.VAR):
+                return self._varDeclaration()
+            return self._statement()
+        except ParseError as error:
+            self._synchronize()
+            return None
+
     def _printStatement(self):
         value = self._expression()
         self._consume(TokenType.SEMICOLON, "Expect ';' after value.")
         return Print(value)
 
+    def _varDeclaration(self):
+        name = self._consume(TokenType.IDENTIFIER, "Expected variable name")
+
+        initializer = None
+        if self._match(TokenType.EQUAL):
+            initializer = self._expression()
+
+        self._consume(TokenType.SEMICOLON, "Expected ';' after variable declaration")
+        return VariableStmt(name, initializer)
+
     def _expressionStatement(self):
         expr = self._expression()
         self._consume(TokenType.SEMICOLON, "Expect ';' after expression.")
         return Expression(expr)
+
+    def _assignment(self):
+        expr = self._equality()
+
+        if self._match(TokenType.EQUAL):
+            equals = self._previous()
+            value = self._assignment()
+
+            if isinstance(expr, grammar.VariableExpr):
+                name = grammar.VariableExpr(expr).name
+                return grammar.Assign(name, value)
+
+            self._error(equals, "Invalid assignment target")
+        
+        return expr
         
     # Binary operator methods
     def _equality(self):
@@ -159,6 +193,10 @@ class Parser:
         # Checking for string or number literals
         if self._match(TokenType.NUMBER, TokenType.STRING):
             return grammar.Literal(self._previous().literal)
+
+        # Checking for variable identifiers
+        if self._match(TokenType.IDENTIFIER):
+            return grammar.VariableExpr(self._previous())
 
         # Checking for parenthesized expressions
         if self._match(TokenType.LEFT_PAREN):
