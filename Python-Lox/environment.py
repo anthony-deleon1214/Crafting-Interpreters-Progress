@@ -6,6 +6,7 @@ class Environment:
         Initialize an empty dictionary for variable bindings
         """
         self.values = {}
+        self.enclosing = None
 
     def define(self, name: str, value) -> None:
         """
