@@ -24,6 +24,9 @@ class Environment:
         if name.lexeme in self.values:
             return self.values.get(name.lexeme)
 
+        if self.enclosing is None:
+            return 
+
         raise RuntimeError(name, "Undefined variable '" + name.lexeme + "'.")
 
     def assign(self, name: Token, value: object) -> None:

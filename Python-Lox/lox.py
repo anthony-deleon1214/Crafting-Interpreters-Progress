@@ -62,7 +62,7 @@ class Lox:
         self.interpreter.interpret(statements)
 
     def runtime_error(self, error):
-        sys.stderr.write("[line " + error.token.line + "] " + error.message)
+        sys.stderr.write("[line " + str(error._token.line) + "] " + error._message)
         self.had_runtime_error = True
 
 if __name__ == "__main__":

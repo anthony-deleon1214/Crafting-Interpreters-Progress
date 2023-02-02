@@ -24,16 +24,16 @@ def stringify(obj: object) -> str:
 
     return str(obj)
 
-def concatOrAdd(left, right, operator):
+def concatOrAdd(left, operator, right):
     """
     Checks the types of the left and right operands
     Adds them if they are numbers
     Concatenates them if they are strings
     """
-    if isinstance(left.value, numbers.Number) and isinstance(right.value, numbers.Number):
-        return float(left.value) + float(right.value)
-    elif isinstance(left.value, str) and isinstance(right.value, str):
-        return str(left.value) + str(right.value)
+    if isinstance(left, numbers.Number) and isinstance(right, numbers.Number):
+        return float(left) + float(right)
+    elif isinstance(left, str) and isinstance(right, str):
+        return left + right
     else:
         raise LoxRuntimeError(operator, "Operands must both be either strings or numbers")
 
@@ -125,33 +125,33 @@ class Interpreter():
 
         match expr.operator.type:
             case scanner.TokenType.MINUS:
-                checkNumberOperands(expr.left, expr.operator, expr.right)
+                checkNumberOperands(left, expr.operator, right)
                 return float(left) - float(right)
             case scanner.TokenType.SLASH:
-                checkNumberOperands(expr.left, expr.operator, expr.right)
+                checkNumberOperands(left, expr.operator, right)
                 return float(left)/float(right)
             case scanner.TokenType.STAR:
-                checkNumberOperands(expr.left, expr.operator, expr.right)
+                checkNumberOperands(left, expr.operator, right)
                 return float(left)*float(right)
             # Lox comparison operators only accept numbers
             case scanner.TokenType.GREATER:
-                checkNumberOperands(expr.left, expr.operator, expr.right)
+                checkNumberOperands(left, expr.operator, right)
                 return float(left) > float(right)
             case scanner.TokenType.GREATER_EQUAL:
-                checkNumberOperands(expr.left, expr.operator, expr.right)
+                checkNumberOperands(left, expr.operator, right)
                 return float(left) >= float(right)
             case scanner.TokenType.LESS:
-                checkNumberOperands(expr.left, expr.operator, expr.right)
+                checkNumberOperands(left, expr.operator, right)
                 return float(left) < float(right)
             case scanner.TokenType.LESS_EQUAL:
-                checkNumberOperands(expr.left, expr.operator, expr.right)
+                checkNumberOperands(left, expr.operator, right)
                 return float(left) <= float(right)
             case scanner.TokenType.EQUAL_EQUAL:
                 return isEqual(left, right)
             case scanner.TokenType.BANG_EQUAL:
                 return left != right
             case scanner.TokenType.PLUS:
-                return concatOrAdd(expr.left, expr.right, expr.operator)
+                return concatOrAdd(left, expr.operator, right)
 
         return None
 
